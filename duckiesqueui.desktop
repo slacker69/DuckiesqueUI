@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Duckiesque UI
+Name[en_US]=Duckiesque UI
+Comment=Duckiesque User Interface
+Icon=Ducky
+Exec=/usr/bin/DuckiesqueUI
+Terminal=false
+Type=Application
+Categories=
+X-GNOME-Autostart-Delay=20
+X-MATE-Autostart-Delay=20

@@ -1,0 +1,3 @@
+STRING "Set-Clipboard -Value (gc((gwmi win32_volume -f 'label=''BashBunny''').Name+'\payloads\\$SWITCH_POSITION\juicybit.txt'))"
+ENTER
+
