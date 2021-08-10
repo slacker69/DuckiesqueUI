@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     actionGroup->addAction(ui->actionhr);
     actionGroup->addAction(ui->actionit);
     actionGroup->addAction(ui->actionno);
+    actionGroup->addAction(ui->actionpl);
     actionGroup->addAction(ui->actionpt);
     actionGroup->addAction(ui->actionru);
     actionGroup->addAction(ui->actionsi);
@@ -176,16 +177,18 @@ void MainWindow::init_props(int locale){
     }else if(locale == 13){
         locale_code = "no";
     }else if(locale == 14){
-        locale_code = "pt";
+        locale_code = "pl";
     }else if(locale == 15){
-        locale_code = "ru";
+        locale_code = "pt";
     }else if(locale == 16){
-        locale_code = "si";
+        locale_code = "ru";
     }else if(locale == 17){
-        locale_code = "sv";
+        locale_code = "si";
     }else if(locale == 18){
-        locale_code = "tr";
+        locale_code = "sv";
     }else if(locale == 19){
+        locale_code = "tr";
+    }else if(locale == 20){
         locale_code = "us";
     }else{
         if(QLocale() == QLocale(QLocale::French, QLocale::Belgium)){
@@ -210,10 +213,8 @@ void MainWindow::init_props(int locale){
             locale_code = "it";
         }else if(QLocale().language() == QLocale::Norwegian){
             locale_code = "no";
-        }else if(QLocale().language() == QLocale::Norwegian){
-            locale_code = "no";
-        }else if(QLocale().language() == QLocale::Portuguese){
-            locale_code = "pt";
+        }else if(QLocale().language() == QLocale::Polish){
+            locale_code = "pl";
         }else if(QLocale().language() == QLocale::Portuguese){
             locale_code = "pt";
         }else if(QLocale().language() == QLocale::Russian){
@@ -360,7 +361,7 @@ void MainWindow::loadOpenFile(QString filename){
 
 bool MainWindow::c2a(QStringList *out, QChar c){
     QString keystring = QString();
-    quint16 c_int = (quint16)(uchar)c.toLatin1();
+    quint16 c_int = (quint16)c.unicode();
     if(c_int < 128){
         keystring = "ASCII_"+QString::number((ulong)c_int, 16).toUpper();
     }else if(c_int < 256){
@@ -368,6 +369,11 @@ bool MainWindow::c2a(QStringList *out, QChar c){
     }else{
         keystring = "UNICODE_"+QString::number((ulong)c_int, 16).toUpper();
     }
+qDebug() << keystring;
+if(c == QString("¤").at(0)){
+    qDebug() << c_int;
+    //exit(1);
+}
     if(!layprops.contains(keystring))
         return false;
     (*out) = layprops.value(keystring);
@@ -968,8 +974,9 @@ bool MainWindow::parse_bin_exec(quint64 *rel_stamp, QByteArray *out){
             }else if(tmp.first == "STRING" && !tmp.second.trimmed().isEmpty()){
                 old_entry = QByteArray();
                 QList<QStringList> tmp3 = QList<QStringList>{};
-                if(!c2wa(&tmp3, tmp.second))
+                if(!c2wa(&tmp3, tmp.second)){
                     return false;
+                }
                 foreach(tmp2, tmp3){
                     int val = 0, n = tmp2.length();
                     bool reset = true;
@@ -1194,28 +1201,32 @@ void MainWindow::on_actionno_triggered(){
     init_props(13);
 }
 
-void MainWindow::on_actionpt_triggered(){
+void MainWindow::on_actionpl_triggered(){
     init_props(14);
 }
 
-void MainWindow::on_actionru_triggered(){
+void MainWindow::on_actionpt_triggered(){
     init_props(15);
 }
 
-void MainWindow::on_actionsi_triggered(){
+void MainWindow::on_actionru_triggered(){
     init_props(16);
 }
 
-void MainWindow::on_actionsv_triggered(){
+void MainWindow::on_actionsi_triggered(){
     init_props(17);
 }
 
-void MainWindow::on_actiontr_triggered(){
+void MainWindow::on_actionsv_triggered(){
     init_props(18);
 }
 
-void MainWindow::on_actionus_triggered(){
+void MainWindow::on_actiontr_triggered(){
     init_props(19);
+}
+
+void MainWindow::on_actionus_triggered(){
+    init_props(20);
 }
 
 void MainWindow::on_actionProgrammer_triggered(){
@@ -1313,6 +1324,36 @@ void MainWindow::on_actionProgrammer_triggered(){
             labelOutput->setText("dfu-programmer does not exist or is not executable.");
         }
     });
+}
+
+void MainWindow::on_actionList_Functions_triggered(){
+    QDialog *d = new QDialog(this);
+    d->show();
+    d->setWindowTitle("List Functions - "+windowTitle());
+    d->setFixedSize(300, 200);
+
+    QListWidget *listWidget = new QListWidget();
+    QStringList sorted_list = cmd_list;
+    sorted_list.sort();
+    QStringListIterator i(sorted_list);
+    while(i.hasNext())
+        listWidget->addItem(i.next());
+
+    QVBoxLayout *qvbl = new QVBoxLayout();
+    d->setLayout(qvbl);
+    qvbl->addWidget(listWidget);
+
+    QHBoxLayout *qhbl1 = new QHBoxLayout();
+    QPushButton *pushButtonClose = new QPushButton("Ok");
+
+    qhbl1->addStretch();
+    qhbl1->addWidget(pushButtonClose);
+    qvbl->addLayout(qhbl1);
+
+    connect(pushButtonClose, &QPushButton::clicked, [=](){
+        d->close();
+    });
+
 }
 
 

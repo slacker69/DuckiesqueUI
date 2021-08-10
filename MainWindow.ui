@@ -130,6 +130,9 @@
         <property name="lineWrapMode">
          <enum>QPlainTextEdit::NoWrap</enum>
         </property>
+        <property name="plainText">
+         <string/>
+        </property>
        </widget>
       </item>
      </layout>
@@ -238,6 +241,7 @@
      <addaction name="actionhr"/>
      <addaction name="actionit"/>
      <addaction name="actionno"/>
+     <addaction name="actionpl"/>
      <addaction name="actionpt"/>
      <addaction name="actionru"/>
      <addaction name="actionsi"/>
@@ -248,6 +252,7 @@
     <addaction name="actionRun"/>
     <addaction name="menuLanguage"/>
     <addaction name="actionProgrammer"/>
+    <addaction name="actionList_Functions"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTools"/>
@@ -474,6 +479,19 @@
    </property>
    <property name="toolTip">
     <string>Run the Fireware Writing Programmer</string>
+   </property>
+  </action>
+  <action name="actionList_Functions">
+   <property name="text">
+    <string>List Functions</string>
+   </property>
+  </action>
+  <action name="actionpl">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>pl</string>
    </property>
   </action>
  </widget>

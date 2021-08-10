@@ -15,6 +15,7 @@
         <file>resources/it.properties</file>
         <file>resources/keyboard.properties</file>
         <file>resources/no.properties</file>
+        <file>resources/pl.properties</file>
         <file>resources/pt.properties</file>
         <file>resources/ru.properties</file>
         <file>resources/si.properties</file>
