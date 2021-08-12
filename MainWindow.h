@@ -88,13 +88,15 @@ private:
     void init_props(int locale);
     void loadOpenFile(QString filename);
     bool c2a(QStringList *out, QChar c);
-    bool k2b(int *out, QString key);
+    bool k2b(QByteArray *out, QString key);
     bool c2b(QByteArray *out, bool *parity, QChar c);
     bool c2w(QByteArray *out, QString str);
     bool c2wa(QList<QStringList> *out, QString str);
     bool single_inst(quint8 *out, QString in);
     bool name_convert(QString *out, QString in);
     bool parse_bin_exec(quint64 *rel_stamp, QByteArray *out);
+    void order_keypress_combination(QStringList *list);
+    bool is_mod(QString in);
     Ui::MainWindow *ui;
     int mainlist_count = 0;
 

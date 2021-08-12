@@ -369,27 +369,39 @@ bool MainWindow::c2a(QStringList *out, QChar c){
     }else{
         keystring = "UNICODE_"+QString::number((ulong)c_int, 16).toUpper();
     }
-qDebug() << keystring;
-if(c == QString("¤").at(0)){
-    qDebug() << c_int;
-    //exit(1);
-}
     if(!layprops.contains(keystring))
         return false;
     (*out) = layprops.value(keystring);
     return true;
 }
 
-bool MainWindow::k2b(int *out, QString key){
+bool MainWindow::k2b(QByteArray *out, QString key){
     bool ok;
+    (*out) = QByteArray();
     if(keyprops.contains(key)){
-        (*out) = keyprops.value(key);
+        (*out).append(QByteArray(1, keyprops.value(key)));
     }else if(layprops.contains(key)){
+        QStringList laypropsList = layprops.value(key);
+        int n = laypropsList.length();
+        QByteArray testOut;
+        bool testList = true;
+        for(int i = 0; i < n; i++){
+            if(k2b(&testOut, laypropsList.at(i))){
+                (*out).append(testOut);
+            }else{
+                testList = false;
+            }
+        }
+        if(!testList){
+            (*out) = QByteArray();
+        }else{
+            return true;
+        }
         QString first_item = layprops.value(key).at(0);
         if(first_item.mid(0,2) == QString("0x")){
-            (*out) = first_item.mid(2).toInt(&ok, 16);
+            (*out).append(QByteArray(1, first_item.mid(2).toInt(&ok, 16)));
         }else{
-            (*out) = first_item.toInt(&ok);
+            (*out).append(QByteArray(1, first_item.toInt(&ok)));
         }
         if(!ok){
             (*out) = 0;
@@ -400,21 +412,28 @@ bool MainWindow::k2b(int *out, QString key){
 }
 
 bool MainWindow::c2b(QByteArray *out, bool *parity, QChar c){
-    int b;
-    QString keystring = QString();
+    QByteArray b;
+    quint8 modifer = 0;
+    (*parity) = false;
     QStringList layout_keys;
 
     if(!c2a(&layout_keys, c))
         return false;
-
+    order_keypress_combination(&layout_keys);
+qDebug() << layout_keys;
     foreach(QString layout_key, layout_keys){
         if(!k2b(&b, layout_key)){
             (*out) = QByteArray();
             return false;
         }
-        (*out).append(QByteArray(1, b));
+qDebug() << modifer << b.toHex() << is_mod(layout_key);
+        if(!is_mod(layout_key))
+            (*out).append(b);
+        else
+            modifer += (quint8)b.at(0);
     }
-    (*parity) = ((layout_keys.length()%2) != 0);
+    (*out).append(QByteArray(1, modifer));
+    (*parity) = (((*out).size()%2) != 0);
     return true;
 }
 
@@ -425,8 +444,9 @@ bool MainWindow::c2w(QByteArray *out, QString str){
     for(int i = 0; i < str.length(); i++){
         keystring = QString();
         QChar c = str.at(i);
-        if(!c2b(out, &parity, c))
+        if(!c2b(out, &parity, c)){
             return false;
+        }
         if(parity)
             (*out).append(1,0);
     }
@@ -443,6 +463,7 @@ bool MainWindow::c2wa(QList<QStringList> *out, QString str){
             (*out).clear();
             return false;
         }
+        order_keypress_combination(&keystringlist);
         (*out).append(keystringlist);
     }
     return true;
@@ -978,31 +999,7 @@ bool MainWindow::parse_bin_exec(quint64 *rel_stamp, QByteArray *out){
                     return false;
                 }
                 foreach(tmp2, tmp3){
-                    int val = 0, n = tmp2.length();
-                    bool reset = true;
-                    while(val<n){
-                        bool isModifer = false;
-                        if(     tmp2.at(val) == "MODIFIERKEY_RIGHT_SHIFT" || tmp2.at(val) == "MODIFIERKEY_SHIFT" ||
-                                tmp2.at(val) == "MODIFIERKEY_LEFT_SHIFT" ||
-                                tmp2.at(val) == "MODIFIERKEY_RIGHT_ALT" || tmp2.at(val) == "MODIFIERKEY_ALT" ||
-                                tmp2.at(val) == "MODIFIERKEY_LEFT_ALT" ||
-                                tmp2.at(val) == "MODIFIERKEY_RIGHT_CTRL" || tmp2.at(val) == "MODIFIERKEY_CTRL" ||
-                                tmp2.at(val) == "MODIFIERKEY_LEFT_CTRL" ||
-                                tmp2.at(val) == "MODIFIERKEY_RIGHT_GUI" || tmp2.at(val) == "MODIFIERKEY_GUI" ||
-                                tmp2.at(val) == "MODIFIERKEY_LEFT_GUI" )
-                            isModifer = true;
-                        if(!isModifer && reset)
-                            reset = false;
-                        if(isModifer && !reset){
-                            QString tmp = tmp2.at(val);
-                            tmp2.removeAt(val);
-                            tmp2.prepend(tmp);
-                            val = 0;
-                            reset = true;
-                            continue;
-                        }
-                        val++;
-                    }
+                    order_keypress_combination(&tmp2);
                     main_seq_indexed.insert((*rel_stamp), QStringList() << tmp2);
                     (*rel_stamp) += default_delay+1;
                 }
@@ -1024,6 +1021,40 @@ bool MainWindow::parse_bin_exec(quint64 *rel_stamp, QByteArray *out){
         }
     }
     return true;
+}
+
+void MainWindow::order_keypress_combination(QStringList *list){
+    int val = 0, oldModifer = 3, n = (*list).length();
+    int reset = true;
+    while(val<n){
+        int isModifer = 0;
+        if(is_mod((*list).at(val)))
+            isModifer = 1;
+        if(oldModifer < isModifer && reset)
+            reset = false;
+        if(isModifer && !reset){
+            QString tmp = (*list).at(val);
+            (*list).removeAt(val);
+            (*list).prepend(tmp);
+            val = 0;
+            oldModifer = 3;
+            reset = true;
+            continue;
+        }
+        val++;
+        oldModifer = isModifer;
+    }
+}
+
+bool MainWindow::is_mod(QString in){
+    return in == "MODIFIERKEY_RIGHT_SHIFT" || in == "MODIFIERKEY_SHIFT" ||
+        in == "MODIFIERKEY_LEFT_SHIFT" ||
+        in == "MODIFIERKEY_RIGHT_ALT" || in == "MODIFIERKEY_ALT" ||
+        in == "MODIFIERKEY_LEFT_ALT" ||
+        in == "MODIFIERKEY_RIGHT_CTRL" || in == "MODIFIERKEY_CTRL" ||
+        in == "MODIFIERKEY_LEFT_CTRL" ||
+        in == "MODIFIERKEY_RIGHT_GUI" || in == "MODIFIERKEY_GUI" ||
+        in == "MODIFIERKEY_LEFT_GUI";
 }
 
 void MainWindow::highlight(){
