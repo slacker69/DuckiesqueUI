@@ -241,7 +241,8 @@
      <addaction name="actionhr"/>
      <addaction name="actionit"/>
      <addaction name="actionno"/>
-     <addaction name="actionpl"/>
+     <addaction name="actionpl_windows"/>
+     <addaction name="actionpl_linux"/>
      <addaction name="actionpt"/>
      <addaction name="actionru"/>
      <addaction name="actionsi"/>
@@ -486,12 +487,20 @@
     <string>List Functions</string>
    </property>
   </action>
-  <action name="actionpl">
+  <action name="actionpl_windows">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>pl</string>
+    <string>pl-windows</string>
+   </property>
+  </action>
+  <action name="actionpl_linux">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>pl-linux</string>
    </property>
   </action>
  </widget>

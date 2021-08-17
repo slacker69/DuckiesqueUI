@@ -38,7 +38,11 @@ quint16 TypeWriterLinux::str2unicode(QString in){
     if(in == "MODIFIERKEY_ALT" || in == "MODIFIERKEY_LEFT_ALT" || in == "KEY_LEFT_ALT")
         return XK_Alt_L;
     if(in == "MODIFIERKEY_RIGHT_ALT" || in == "KEY_RIGHT_ALT")
+#ifdef XK_ISO_Level3_Shift
+        return XK_ISO_Level3_Shift;
+#else
         return XK_Alt_R;
+#endif
     if(in == "MODIFIERKEY_SHIFT" || in == "MODIFIERKEY_LEFT_SHIFT" || in == "KEY_LEFT_SHIFT")
         return XK_Shift_L;
     if(in == "MODIFIERKEY_RIGHT_SHIFT" || in == "KEY_RIGHT_SHIFT")

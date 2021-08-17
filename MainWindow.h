@@ -64,7 +64,8 @@ private slots:
     void on_actionhr_triggered();
     void on_actionit_triggered();
     void on_actionno_triggered();
-    void on_actionpl_triggered();
+    void on_actionpl_windows_triggered();
+    void on_actionpl_linux_triggered();
     void on_actionpt_triggered();
     void on_actionru_triggered();
     void on_actionsi_triggered();

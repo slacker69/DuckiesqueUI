@@ -35,9 +35,9 @@ unsigned char TypeWriterWindows::str2unicode(QString in){
     if(in == "MODIFIERKEY_RIGHT_GUI" || in == "KEY_RIGHT_GUI")
         return VK_RWIN;
     if(in == "MODIFIERKEY_ALT" || in == "MODIFIERKEY_LEFT_ALT" || in == "KEY_LEFT_ALT")
-        return VK_MENU;
+        return VK_LMENU;
     if(in == "MODIFIERKEY_RIGHT_ALT" || in == "KEY_RIGHT_ALT")
-        return VK_MENU;
+        return VK_RMENU;
     if(in == "MODIFIERKEY_SHIFT" || in == "MODIFIERKEY_LEFT_SHIFT" || in == "KEY_LEFT_SHIFT")
         return VK_LSHIFT;
     if(in == "MODIFIERKEY_RIGHT_SHIFT" || in == "KEY_RIGHT_SHIFT")

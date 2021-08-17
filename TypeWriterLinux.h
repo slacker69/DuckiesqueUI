@@ -2,6 +2,7 @@
 #define TYPEWRITERLINUX_H
 
 #include <QObject>
+#include <QDebug>
 
 #ifdef Q_OS_LINUX
 

@@ -23,7 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
     actionGroup->addAction(ui->actionhr);
     actionGroup->addAction(ui->actionit);
     actionGroup->addAction(ui->actionno);
-    actionGroup->addAction(ui->actionpl);
+    actionGroup->addAction(ui->actionpl_windows);
+    actionGroup->addAction(ui->actionpl_linux);
     actionGroup->addAction(ui->actionpt);
     actionGroup->addAction(ui->actionru);
     actionGroup->addAction(ui->actionsi);
@@ -177,18 +178,20 @@ void MainWindow::init_props(int locale){
     }else if(locale == 13){
         locale_code = "no";
     }else if(locale == 14){
-        locale_code = "pl";
+        locale_code = "pl-windows";
     }else if(locale == 15){
-        locale_code = "pt";
+        locale_code = "pl-linux";
     }else if(locale == 16){
-        locale_code = "ru";
+        locale_code = "pt";
     }else if(locale == 17){
-        locale_code = "si";
+        locale_code = "ru";
     }else if(locale == 18){
-        locale_code = "sv";
+        locale_code = "si";
     }else if(locale == 19){
-        locale_code = "tr";
+        locale_code = "sv";
     }else if(locale == 20){
+        locale_code = "tr";
+    }else if(locale == 21){
         locale_code = "us";
     }else{
         if(QLocale() == QLocale(QLocale::French, QLocale::Belgium)){
@@ -214,7 +217,7 @@ void MainWindow::init_props(int locale){
         }else if(QLocale().language() == QLocale::Norwegian){
             locale_code = "no";
         }else if(QLocale().language() == QLocale::Polish){
-            locale_code = "pl";
+            locale_code = "pl-windows";
         }else if(QLocale().language() == QLocale::Portuguese){
             locale_code = "pt";
         }else if(QLocale().language() == QLocale::Russian){
@@ -420,13 +423,11 @@ bool MainWindow::c2b(QByteArray *out, bool *parity, QChar c){
     if(!c2a(&layout_keys, c))
         return false;
     order_keypress_combination(&layout_keys);
-qDebug() << layout_keys;
     foreach(QString layout_key, layout_keys){
         if(!k2b(&b, layout_key)){
             (*out) = QByteArray();
             return false;
         }
-qDebug() << modifer << b.toHex() << is_mod(layout_key);
         if(!is_mod(layout_key))
             (*out).append(b);
         else
@@ -633,6 +634,7 @@ void MainWindow::timeline_slot(quint64 value){
             break;
         counted_run++;
         QStringList taken = main_seq_indexed.value(i.key());
+qDebug() << taken;
         typewriter->type_key(taken);
     }
     for(quint64 j = 0; j < counted_run; j++)
@@ -1232,32 +1234,36 @@ void MainWindow::on_actionno_triggered(){
     init_props(13);
 }
 
-void MainWindow::on_actionpl_triggered(){
+void MainWindow::on_actionpl_windows_triggered(){
     init_props(14);
 }
 
-void MainWindow::on_actionpt_triggered(){
+void MainWindow::on_actionpl_linux_triggered(){
     init_props(15);
 }
 
-void MainWindow::on_actionru_triggered(){
+void MainWindow::on_actionpt_triggered(){
     init_props(16);
 }
 
-void MainWindow::on_actionsi_triggered(){
+void MainWindow::on_actionru_triggered(){
     init_props(17);
 }
 
-void MainWindow::on_actionsv_triggered(){
+void MainWindow::on_actionsi_triggered(){
     init_props(18);
 }
 
-void MainWindow::on_actiontr_triggered(){
+void MainWindow::on_actionsv_triggered(){
     init_props(19);
 }
 
-void MainWindow::on_actionus_triggered(){
+void MainWindow::on_actiontr_triggered(){
     init_props(20);
+}
+
+void MainWindow::on_actionus_triggered(){
+    init_props(21);
 }
 
 void MainWindow::on_actionProgrammer_triggered(){
